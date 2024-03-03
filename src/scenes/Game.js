@@ -7,7 +7,6 @@ let cursors;
 let score = 0;
 let gameOver = false;
 let scoreText;
-let onStar = false;
 
 export class Game extends Scene {
   constructor() {
@@ -19,17 +18,33 @@ export class Game extends Scene {
     //  A simple background for our game
     this.add.image(1024 / 2, 768 / 2, "sky");
 
-    const floors = this.physics.add.staticGroup();
+    const house = this.physics.add.staticGroup();
     const floorHeight = 700 / levelData.floors.length;
-
+    const ceilingHeight = 768 - (levelData.floors.length) * floorHeight
     levelData.floors.forEach((floor, i) => {
-      floors
-        .create(512, 768 - 16 - i * floorHeight, "floor")
-        .refreshBody();
-    })
+      const f = house.create(300, 768 - 16 - i * floorHeight, "floor")
+      f.displayWidth = 600;
+      f.refreshBody();
+    });
+
+    const ceiling = house.create(300, ceilingHeight - 16, "floor")
+    ceiling.displayWidth = 600;
+    ceiling.refreshBody();
+
+    const leftWall = house.create(16, (768 - ceilingHeight) / 2 + 64, "floor")
+    leftWall.displayHeight = (768 - ceilingHeight);
+    leftWall.refreshBody();
+
+    const rightWall = house.create(600 - 16, (768 - ceilingHeight) / 2 + 64, "floor")
+    rightWall.displayHeight = (768 - ceilingHeight);
+    rightWall.refreshBody();
+
+    const platform = house.create(850, 400, "floor")
+    platform.displayWidth = 300;
+    platform.refreshBody();
 
     // The player and its settings
-    player = this.physics.add.sprite(100, 450, "dude");
+    player = this.physics.add.sprite(850, 350, "dude");
 
     //  Player physics properties. Give the little guy a slight bounce.
     player.setBounce(0.2);
@@ -60,36 +75,14 @@ export class Game extends Scene {
     // @ts-ignore
     cursors = this.input.keyboard.createCursorKeys();
 
-    //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
-    stars = this.physics.add.group({
-      key: "star",
-      repeat: 14,
-      setXY: { x: 12, y: 0, stepX: 70 },
-    });
-
-    stars.children.iterate((child) => {
-      //  Give each star a slightly different bounce
-      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-      return true;
-    });
-
-    bombs = this.physics.add.group();
-
     //  The score
-    scoreText = this.add.text(16, 16, "score: 0", {
+    scoreText = this.add.text(800, 16, "score: 0", {
       fontSize: "32px",
       color: "#000",
     });
 
-    //  Collide the player and the stars with the platforms
-    this.physics.add.collider(player, floors);
-    this.physics.add.collider(stars, floors);
-    this.physics.add.collider(bombs, floors);
-
-    //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-    this.physics.add.overlap(player, stars, this.collectStar, undefined, this);
-
-    this.physics.add.collider(player, bombs, this.hitBomb, undefined, this);
+    //  Collide the player with the platforms
+    this.physics.add.collider(player, house);
   }
 
   update() {
@@ -111,46 +104,8 @@ export class Game extends Scene {
       player.anims.play("turn");
     }
 
-    if (cursors.up.isDown && player.body.touching.down && !onStar) {
+    if (cursors.up.isDown && player.body.touching.down) {
       player.setVelocityY(-330);
     }
-    onStar = false;
-  }
-
-  collectStar(player, star) {
-    star.disableBody(true, true);
-    onStar = true;
-
-    //  Add and update the score
-    score += 10;
-    scoreText.setText("Score: " + score);
-
-    if (stars.countActive(true) === 0) {
-      //  A new batch of stars to collect
-      stars.children.iterate(function (child) {
-        child.enableBody(true, child.x, 0, true, true);
-      });
-
-      var x =
-        player.x < 400
-          ? Phaser.Math.Between(400, 800)
-          : Phaser.Math.Between(0, 400);
-
-      var bomb = bombs.create(x, 16, "bomb");
-      bomb.setBounce(1);
-      bomb.setCollideWorldBounds(true);
-      bomb.setVelocity(Phaser.Math.Between(-200, 200), 20);
-      bomb.allowGravity = false;
-    }
-  }
-
-  hitBomb(player, bomb) {
-    this.physics.pause();
-
-    player.setTint(0xff0000);
-
-    player.anims.play("turn");
-
-    gameOver = true;
   }
 }
