@@ -17,7 +17,7 @@ export class Game extends Scene {
 
   create() {
     //  A simple background for our game
-    this.add.image(400, 300, "sky");
+    this.add.image(500, 350, "sky");
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = this.physics.add.staticGroup();
@@ -25,15 +25,15 @@ export class Game extends Scene {
     //  Here we create the ground.
     //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
     platforms
-      .create(400, 568, "ground")
-      .setScale(2)
+      .create(512, 668, "ground")
+      .setScale(3)
 
       .refreshBody();
 
     //  Now let's create some ledges
-    platforms.create(600, 400, "ground");
-    platforms.create(50, 250, "ground");
-    platforms.create(750, 220, "ground");
+    platforms.create(600, 500, "ground");
+    platforms.create(50, 350, "ground");
+    platforms.create(750, 320, "ground");
 
     // The player and its settings
     player = this.physics.add.sprite(100, 450, "dude");
@@ -69,13 +69,14 @@ export class Game extends Scene {
     //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
     stars = this.physics.add.group({
       key: "star",
-      repeat: 11,
+      repeat: 14,
       setXY: { x: 12, y: 0, stepX: 70 },
     });
 
     stars.children.iterate(function (child) {
       //  Give each star a slightly different bounce
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+      return true;
     });
 
     bombs = this.physics.add.group();
@@ -83,7 +84,7 @@ export class Game extends Scene {
     //  The score
     scoreText = this.add.text(16, 16, "score: 0", {
       fontSize: "32px",
-      fill: "#000",
+      color: "#000",
     });
 
     //  Collide the player and the stars with the platforms
