@@ -16,8 +16,10 @@ export class Game extends Scene {
   }
 
   create() {
+    var data = this.cache.json.get('level');
+    console.log(data)
     //  A simple background for our game
-    this.add.image(500, 350, "sky");
+    this.add.image(1024 / 2, 768 / 2, "sky");
 
     //  The platforms group contains the ground and the 2 ledges we can jump on
     platforms = this.physics.add.staticGroup();
@@ -25,15 +27,14 @@ export class Game extends Scene {
     //  Here we create the ground.
     //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
     platforms
-      .create(512, 668, "ground")
-      .setScale(3)
-
+      .create(512, 768 - 16, "floor")
       .refreshBody();
 
     //  Now let's create some ledges
-    platforms.create(600, 500, "ground");
-    platforms.create(50, 350, "ground");
-    platforms.create(750, 320, "ground");
+    platforms.create(600, 590, "platform");
+    platforms.create(50, 420, "platform");
+    platforms.create(750, 360, "platform");
+    platforms.create(1000, 200, "platform");
 
     // The player and its settings
     player = this.physics.add.sprite(100, 450, "dude");

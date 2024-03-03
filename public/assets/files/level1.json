@@ -1,0 +1,29 @@
+{
+  "floors": [
+    {
+      "doors": [
+        {
+          "type": "exit"
+        }
+      ]
+    },
+    {
+      "doors": []
+    },
+    {
+      "doors": [
+        {
+          "type": "desk"
+        }
+      ]
+    }
+  ],
+  "lifts": [
+    {
+      "floors": [
+        0,
+        2
+      ]
+    }
+  ]
+}
