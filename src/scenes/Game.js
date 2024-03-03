@@ -1,14 +1,13 @@
 import { Scene } from 'phaser';
 
-var player;
-var stars;
-var bombs;
-var platforms;
-var cursors;
-var score = 0;
-var gameOver = false;
-var scoreText;
-var onStar = false;
+let player;
+let stars;
+let bombs;
+let cursors;
+let score = 0;
+let gameOver = false;
+let scoreText;
+let onStar = false;
 
 export class Game extends Scene {
   constructor() {
@@ -16,25 +15,18 @@ export class Game extends Scene {
   }
 
   create() {
-    var data = this.cache.json.get('level');
-    console.log(data)
+    let levelData = this.cache.json.get('level');
     //  A simple background for our game
     this.add.image(1024 / 2, 768 / 2, "sky");
 
-    //  The platforms group contains the ground and the 2 ledges we can jump on
-    platforms = this.physics.add.staticGroup();
+    const floors = this.physics.add.staticGroup();
+    const floorHeight = 700 / levelData.floors.length;
 
-    //  Here we create the ground.
-    //  Scale it to fit the width of the game (the original sprite is 400x32 in size)
-    platforms
-      .create(512, 768 - 16, "floor")
-      .refreshBody();
-
-    //  Now let's create some ledges
-    platforms.create(600, 590, "platform");
-    platforms.create(50, 420, "platform");
-    platforms.create(750, 360, "platform");
-    platforms.create(1000, 200, "platform");
+    levelData.floors.forEach((floor, i) => {
+      floors
+        .create(512, 768 - 16 - i * floorHeight, "floor")
+        .refreshBody();
+    })
 
     // The player and its settings
     player = this.physics.add.sprite(100, 450, "dude");
@@ -65,6 +57,7 @@ export class Game extends Scene {
     });
 
     //  Input Events
+    // @ts-ignore
     cursors = this.input.keyboard.createCursorKeys();
 
     //  Some stars to collect, 12 in total, evenly spaced 70 pixels apart along the x axis
@@ -74,7 +67,7 @@ export class Game extends Scene {
       setXY: { x: 12, y: 0, stepX: 70 },
     });
 
-    stars.children.iterate(function (child) {
+    stars.children.iterate((child) => {
       //  Give each star a slightly different bounce
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
       return true;
@@ -89,9 +82,9 @@ export class Game extends Scene {
     });
 
     //  Collide the player and the stars with the platforms
-    this.physics.add.collider(player, platforms);
-    this.physics.add.collider(stars, platforms);
-    this.physics.add.collider(bombs, platforms);
+    this.physics.add.collider(player, floors);
+    this.physics.add.collider(stars, floors);
+    this.physics.add.collider(bombs, floors);
 
     //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
     this.physics.add.overlap(player, stars, this.collectStar, undefined, this);
