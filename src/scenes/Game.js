@@ -1,8 +1,6 @@
 import { Scene } from 'phaser';
 
 let player;
-let stars;
-let bombs;
 let cursors;
 let score = 0;
 let gameOver = false;
@@ -43,6 +41,9 @@ export class Game extends Scene {
     platform.displayWidth = 300;
     platform.refreshBody();
 
+    const doors = this.physics.add.staticGroup();
+    const door = doors.create(768 - 16 - 28, 400 - 16 - 24, "door")
+
     // The player and its settings
     player = this.physics.add.sprite(850, 350, "dude");
 
@@ -70,6 +71,20 @@ export class Game extends Scene {
       frameRate: 10,
       repeat: -1,
     });
+
+    this.anims.create({
+      key: "openDoor",
+      frames: this.anims.generateFrameNumbers("door", { start: 0, end: 4 }),
+      frameRate: 5,
+    });
+
+    this.anims.create({
+      key: "closeDoor",
+      frames: this.anims.generateFrameNumbers("door", { start: 0, end: 4 }),
+      frameRate: 5,
+    });
+
+    door.anims.play('openDoor')
 
     //  Input Events
     // @ts-ignore
