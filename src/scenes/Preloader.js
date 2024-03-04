@@ -44,8 +44,38 @@ export class Preloader extends Scene {
   }
 
   create() {
-    //  When all the assets have loaded, it's often worth creating global objects here that the rest of the game can use.
-    //  For example, you can define global animations here, so we can use them in other scenes.
+    //  Our player animations, turning, walking left and walking right.
+    this.anims.create({
+      key: "player/left",
+      frames: this.anims.generateFrameNumbers("dude", { start: 0, end: 3 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "player/turn",
+      frames: [{ key: "dude", frame: 4 }],
+      frameRate: 20,
+    });
+
+    this.anims.create({
+      key: "player/right",
+      frames: this.anims.generateFrameNumbers("dude", { start: 5, end: 8 }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "door/open",
+      frames: this.anims.generateFrameNumbers("door", { start: 0, end: 4 }),
+      frameRate: 5,
+    });
+
+    this.anims.create({
+      key: "door/close",
+      frames: this.anims.generateFrameNumbers("door", { start: 0, end: 4 }),
+      frameRate: 5,
+    });
 
     //  Move to the MainMenu. You could also swap this for a Scene Transition, such as a camera fade.
     this.scene.start('Game');
