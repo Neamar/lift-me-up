@@ -2,12 +2,28 @@ import { Scene } from 'phaser';
 import { Player } from '../objects/player/player.js';
 import { Door } from '../objects/door.js';
 
-let player;
-let cursors;
-let gameOver = false;
-let scoreText;
 
 export class Game extends Scene {
+  /**
+   * @type Player
+   */
+  player;
+
+  /**
+   * @type Phaser.Physics.Arcade.StaticGroup
+   */
+  house;
+
+  /**
+   * @type Phaser.Physics.Arcade.StaticGroup
+   */
+  doors;
+
+  /**
+   * @type Phaser.Types.Input.Keyboard.CursorKeys
+   */
+  cursors;
+
   constructor() {
     super('Game');
   }
@@ -17,9 +33,9 @@ export class Game extends Scene {
     //  A simple background for our game
     this.add.image(1024 / 2, 768 / 2, "sky");
 
-    const house = this.physics.add.staticGroup();
+    this.house = this.physics.add.staticGroup();
     levelData.structure.forEach((structure, i) => {
-      const f = house.create(structure.x, structure.y, "floor");
+      const f = this.house.create(structure.x, structure.y, "floor");
       f.setOrigin(0, 0);
       f.displayWidth = structure.w;
       f.displayHeight = structure.h;
@@ -27,33 +43,29 @@ export class Game extends Scene {
     });
 
 
-    const doors = this.physics.add.staticGroup();
+    this.doors = this.physics.add.staticGroup();
     const door = new Door(this, 768, 400 - 24);
-    doors.add(door);
+    this.doors.add(door);
 
     // The player and its settings
-    player = new Player(this, 850, 250);
+    this.player = new Player(this, 850, 250);
     //  Input Events
     // @ts-ignore
-    cursors = this.input.keyboard.createCursorKeys();
+    this.cursors = this.input.keyboard.createCursorKeys();
 
     //  The score
-    scoreText = this.add.text(800, 16, "score: 0", {
+    this.scoreText = this.add.text(800, 16, "score: 0", {
       fontSize: "32px",
       color: "#000",
     });
 
     //  Collide the player with the platforms
-    this.physics.add.collider(player, house);
-    this.physics.add.overlap(player, doors, this.onDoorCollided);
+    this.physics.add.collider(this.player, this.house);
+    this.physics.add.overlap(this.player, this.doors, this.onDoorCollided);
   }
 
   update() {
-    if (gameOver) {
-      return;
-    }
-
-    player.update(cursors);
+    this.player.update(this);
   }
 
   onDoorCollided(arg1, arg2) {

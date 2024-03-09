@@ -19,7 +19,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.currentState = new PlayerStateMoving(this);
   }
 
-  update(cursors) {
-    this.currentState.update(cursors);
+  update(game) {
+    this.currentState.update(game);
   }
 }
