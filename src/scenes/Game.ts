@@ -2,12 +2,14 @@ import { Scene } from "phaser";
 import { Player } from "../objects/player/player";
 import { Door } from "../objects/door";
 import { Meep } from "../objects/meep/meep";
+import { LiftDoor } from "../objects/lift-door";
 
 export class Game extends Scene {
   player: Player;
   meeps: Phaser.Physics.Arcade.Group;
   house: Phaser.Physics.Arcade.StaticGroup;
   doors: Phaser.Physics.Arcade.StaticGroup;
+  liftDoors: Phaser.Physics.Arcade.StaticGroup;
   cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   scoreText: Phaser.GameObjects.Text;
 
@@ -21,7 +23,7 @@ export class Game extends Scene {
     this.add.image(1024 / 2, 768 / 2, "sky");
 
     this.house = this.physics.add.staticGroup();
-    levelData.structure.forEach((structure, i) => {
+    levelData.structure.forEach((structure) => {
       const f = this.house.create(structure.x, structure.y, "floor");
       f.setOrigin(0, 0);
       f.displayWidth = structure.w;
@@ -30,11 +32,16 @@ export class Game extends Scene {
     });
 
     this.doors = this.physics.add.staticGroup();
-    const door = new Door(this, 768, 400 - 24);
-    this.doors.add(door);
-    this.doors.add(new Door(this, 100, 300 - 24, 2));
-    this.doors.add(new Door(this, 100, 500 - 24, 2.5));
-    this.doors.add(new Door(this, 100, 700 - 24));
+    levelData.doors.forEach((doorData) => {
+      const door = new Door(this, doorData.x, doorData.y - 24);
+      this.doors.add(door);
+    });
+
+    this.liftDoors = this.physics.add.staticGroup();
+    levelData.liftDoors.forEach((doorData) => {
+      const liftDoor = new LiftDoor(this, doorData.x, doorData.y - 24);
+      this.liftDoors.add(liftDoor);
+    });
 
     // The player and its settings
     this.player = new Player(this, 850, 250);
@@ -43,6 +50,9 @@ export class Game extends Scene {
     this.meeps = this.physics.add.group();
     const meep = new Meep(this, 500, 350);
     this.meeps.add(meep);
+    const meep2 = new Meep(this, 300, 350);
+    this.meeps.add(meep2);
+    this.meeps.add(new Meep(this, 350, 550));
     this.physics.add.collider(this.meeps, this.house);
 
     //  Input Events

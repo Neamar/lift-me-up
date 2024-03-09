@@ -1,11 +1,11 @@
-import { Door } from "../door";
+import { LiftDoor } from "../lift-door";
 import { Meep } from "./meep";
 import { MeepStateWaitingLift } from "./state-waiting-lift";
 
 export class MeepStateMoving {
   meep: Meep;
 
-  registeredAtDoor?: Door;
+  registeredAtDoor?: LiftDoor;
   constructor(meep) {
     this.meep = meep;
   }
@@ -19,13 +19,17 @@ export class MeepStateMoving {
     this.meep.anims.play("player/left", true);
 
     if (!this.registeredAtDoor) {
-      let atDoor: Door;
+      let atDoor: LiftDoor;
       if (
-        game.physics.overlap(this.meep, game.doors, (meep, door: Door) => {
-          atDoor = door;
-          door.register(meep);
-          door.anims.play("door/open");
-        })
+        game.physics.overlap(
+          this.meep,
+          game.liftDoors,
+          (meep, door: LiftDoor) => {
+            atDoor = door;
+            door.register(meep);
+            door.anims.play("door/open");
+          }
+        )
       ) {
         return new MeepStateWaitingLift(this.meep, atDoor!);
       }

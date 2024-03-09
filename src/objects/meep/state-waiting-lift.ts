@@ -1,10 +1,10 @@
-import { Door } from "../door";
+import { LiftDoor } from "../lift-door";
 import { Meep } from "./meep";
 
 export class MeepStateWaitingLift {
   meep: Meep;
 
-  atDoor: Door;
+  atDoor: LiftDoor;
   constructor(meep, atDoor) {
     this.meep = meep;
     this.atDoor = atDoor;
