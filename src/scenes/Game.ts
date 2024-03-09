@@ -36,6 +36,7 @@ export class Game extends Scene {
       const door = new Door(this, doorData.x, doorData.y - 24);
       this.doors.add(door);
     });
+    (this.doors.getChildren()[0] as Door).createMeep(this);
 
     this.liftDoors = this.physics.add.staticGroup();
     levelData.liftDoors.forEach((doorData) => {
@@ -48,11 +49,7 @@ export class Game extends Scene {
     this.physics.add.collider(this.player, this.house);
 
     this.meeps = this.physics.add.group();
-    const meep = new Meep(this, 500, 350);
-    this.meeps.add(meep);
-    const meep2 = new Meep(this, 300, 350);
-    this.meeps.add(meep2);
-    this.meeps.add(new Meep(this, 350, 550));
+    this.createMeep(500, 350);
     this.physics.add.collider(this.meeps, this.house);
 
     //  Input Events
@@ -71,5 +68,10 @@ export class Game extends Scene {
     this.meeps.getChildren().forEach((meep) => {
       meep.update(this);
     });
+  }
+
+  createMeep(x, y) {
+    const meep = new Meep(this, x, y);
+    this.meeps.add(meep);
   }
 }
