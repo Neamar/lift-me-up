@@ -1,8 +1,10 @@
-import { Game } from '../../scenes/Game.js';
-import { Door } from '../door.js';
-import { Player } from './player.js';
+import { Game } from "../../scenes/Game";
+import { Door } from "../door";
+import { Player } from "./player";
 
 export class PlayerStateMoving {
+  player: Player;
+
   constructor(player) {
     this.player = player;
   }
@@ -26,13 +28,16 @@ export class PlayerStateMoving {
       this.player.anims.play("player/turn");
     }
 
-    if (game.cursors.up.isDown && this.player.body.touching.down) {
+    if (game.cursors.up.isDown && this.player.body!.touching.down) {
       this.player.setVelocityY(-330);
     }
 
-
-    game.physics.overlap(this.player, game.doors, (player, door) => {
-      door.anims.play('door/open')
-    });
+    game.physics.overlap(
+      this.player,
+      game.doors,
+      (player, door: Phaser.Physics.Arcade.Sprite) => {
+        door.anims.play("door/open");
+      }
+    );
   }
 }

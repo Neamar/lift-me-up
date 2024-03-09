@@ -1,7 +1,7 @@
 import { Scene } from 'phaser';
-import { Player } from '../objects/player/player.js';
-import { Door } from '../objects/door.js';
-import { Meep } from '../objects/meep/meep.js';
+import { Player } from '../objects/player/player';
+import { Door } from '../objects/door';
+import { Meep } from '../objects/meep/meep';
 
 
 export class Game extends Scene {
@@ -61,9 +61,9 @@ export class Game extends Scene {
     this.physics.add.collider(this.player, this.house);
 
     this.meeps = this.physics.add.group();
-    this.physics.add.collider(this.meeps, this.house);
-    const meep = new Meep(this, 550, 350);
+    const meep = new Meep(this, 500, 350);
     this.meeps.add(meep);
+    this.physics.add.collider(this.meeps, this.house);
 
     //  Input Events
     // @ts-ignore
@@ -74,8 +74,6 @@ export class Game extends Scene {
       fontSize: "32px",
       color: "#000",
     });
-
-    //  Collide the player with the platforms
   }
 
   update() {
