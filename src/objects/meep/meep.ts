@@ -20,6 +20,9 @@ export class Meep extends Phaser.Physics.Arcade.Sprite {
   }
 
   update(game) {
-    this.currentState.update(game);
+    const newState = this.currentState.update(game);
+    if (newState) {
+      this.currentState = newState;
+    }
   }
 }

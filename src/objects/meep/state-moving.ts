@@ -1,12 +1,11 @@
-import { Game } from "../../scenes/Game.js";
-import { Meep } from "./meep.ts/index.js";
+import { Door } from "../door";
+import { Meep } from "./meep";
+import { MeepStateWaitingLift } from "./state-waiting-lift";
 
 export class MeepStateMoving {
-  /**
-   * @type Meep
-   */
-  meep;
+  meep: Meep;
 
+  registeredAtDoor?: Door;
   constructor(meep) {
     this.meep = meep;
   }
@@ -16,16 +15,20 @@ export class MeepStateMoving {
    * @param {Game} game
    */
   update(game) {
-    // this.meep.setVelocityX(-160);
-    // this.meep.anims.play("player/left", true);
+    this.meep.setVelocityX(-160);
+    this.meep.anims.play("player/left", true);
 
-    game.physics.overlap(
-      this.meep,
-      game.doors,
-      (meep, door: Phaser.Physics.Arcade.Sprite) => {
-        console.log("overlap");
-        door.anims.play("door/open");
+    if (!this.registeredAtDoor) {
+      let atDoor: Door;
+      if (
+        game.physics.overlap(this.meep, game.doors, (meep, door: Door) => {
+          atDoor = door;
+          door.register(meep);
+          door.anims.play("door/open");
+        })
+      ) {
+        return new MeepStateWaitingLift(this.meep, atDoor!);
       }
-    );
+    }
   }
 }

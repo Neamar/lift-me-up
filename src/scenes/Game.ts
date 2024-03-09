@@ -1,41 +1,22 @@
-import { Scene } from 'phaser';
-import { Player } from '../objects/player/player';
-import { Door } from '../objects/door';
-import { Meep } from '../objects/meep/meep';
-
+import { Scene } from "phaser";
+import { Player } from "../objects/player/player";
+import { Door } from "../objects/door";
+import { Meep } from "../objects/meep/meep";
 
 export class Game extends Scene {
-  /**
-   * @type Player
-   */
-  player;
-
-  /**
-   * @type Phaser.Physics.Arcade.Group
-   */
-  meeps;
-
-  /**
-   * @type Phaser.Physics.Arcade.StaticGroup
-   */
-  house;
-
-  /**
-   * @type Phaser.Physics.Arcade.StaticGroup
-   */
-  doors;
-
-  /**
-   * @type Phaser.Types.Input.Keyboard.CursorKeys
-   */
-  cursors;
+  player: Player;
+  meeps: Phaser.Physics.Arcade.Group;
+  house: Phaser.Physics.Arcade.StaticGroup;
+  doors: Phaser.Physics.Arcade.StaticGroup;
+  cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  scoreText: Phaser.GameObjects.Text;
 
   constructor() {
-    super('Game');
+    super("Game");
   }
 
   create() {
-    let levelData = this.cache.json.get('level');
+    let levelData = this.cache.json.get("level");
     //  A simple background for our game
     this.add.image(1024 / 2, 768 / 2, "sky");
 
@@ -48,12 +29,11 @@ export class Game extends Scene {
       f.refreshBody();
     });
 
-
     this.doors = this.physics.add.staticGroup();
     const door = new Door(this, 768, 400 - 24);
     this.doors.add(door);
-    this.doors.add(new Door(this, 100, 300 - 24));
-    this.doors.add(new Door(this, 100, 500 - 24));
+    this.doors.add(new Door(this, 100, 300 - 24, 2));
+    this.doors.add(new Door(this, 100, 500 - 24, 2.5));
     this.doors.add(new Door(this, 100, 700 - 24));
 
     // The player and its settings
@@ -78,9 +58,8 @@ export class Game extends Scene {
 
   update() {
     this.player.update(this);
-    this.meeps.getChildren().forEach(meep => {
+    this.meeps.getChildren().forEach((meep) => {
       meep.update(this);
     });
   }
-
 }
