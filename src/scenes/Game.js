@@ -1,6 +1,7 @@
 import { Scene } from 'phaser';
 import { Player } from '../objects/player/player.js';
 import { Door } from '../objects/door.js';
+import { Meep } from '../objects/meep/meep.js';
 
 
 export class Game extends Scene {
@@ -8,6 +9,11 @@ export class Game extends Scene {
    * @type Player
    */
   player;
+
+  /**
+   * @type Phaser.Physics.Arcade.Group
+   */
+  meeps;
 
   /**
    * @type Phaser.Physics.Arcade.StaticGroup
@@ -46,9 +52,19 @@ export class Game extends Scene {
     this.doors = this.physics.add.staticGroup();
     const door = new Door(this, 768, 400 - 24);
     this.doors.add(door);
+    this.doors.add(new Door(this, 100, 300 - 24));
+    this.doors.add(new Door(this, 100, 500 - 24));
+    this.doors.add(new Door(this, 100, 700 - 24));
 
     // The player and its settings
     this.player = new Player(this, 850, 250);
+    this.physics.add.collider(this.player, this.house);
+
+    this.meeps = this.physics.add.group();
+    this.physics.add.collider(this.meeps, this.house);
+    const meep = new Meep(this, 550, 350);
+    this.meeps.add(meep);
+
     //  Input Events
     // @ts-ignore
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -60,15 +76,13 @@ export class Game extends Scene {
     });
 
     //  Collide the player with the platforms
-    this.physics.add.collider(this.player, this.house);
-    this.physics.add.overlap(this.player, this.doors, this.onDoorCollided);
   }
 
   update() {
     this.player.update(this);
+    this.meeps.getChildren().forEach(meep => {
+      meep.update(this);
+    });
   }
 
-  onDoorCollided(arg1, arg2) {
-    arg2.anims.play('door/open')
-  }
 }

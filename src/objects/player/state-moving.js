@@ -1,4 +1,6 @@
 import { Game } from '../../scenes/Game.js';
+import { Door } from '../door.js';
+import { Player } from './player.js';
 
 export class PlayerStateMoving {
   constructor(player) {
@@ -28,8 +30,9 @@ export class PlayerStateMoving {
       this.player.setVelocityY(-330);
     }
 
-    if (game.physics.overlap(this.player, game.doors)) {
-      console.log("door!")
-    }
+
+    game.physics.overlap(this.player, game.doors, (player, door) => {
+      door.anims.play('door/open')
+    });
   }
 }
