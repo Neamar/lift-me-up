@@ -1,3 +1,4 @@
+import { PlayerStateMoving } from './state-moving.js';
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
@@ -14,5 +15,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     this.setBounce(0.2);
     this.setCollideWorldBounds(true);
     this.body.syncBounds = true;
+
+    this.currentState = new PlayerStateMoving(this);
+  }
+
+  update(cursors) {
+    this.currentState.update(cursors);
   }
 }

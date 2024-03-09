@@ -1,10 +1,9 @@
 import { Scene } from 'phaser';
-import { Player } from '../objects/player.js';
+import { Player } from '../objects/player/player.js';
 import { Door } from '../objects/door.js';
 
 let player;
 let cursors;
-let score = 0;
 let gameOver = false;
 let scoreText;
 
@@ -54,23 +53,7 @@ export class Game extends Scene {
       return;
     }
 
-    if (cursors.left.isDown) {
-      player.setVelocityX(-160);
-
-      player.anims.play("player/left", true);
-    } else if (cursors.right.isDown) {
-      player.setVelocityX(160);
-
-      player.anims.play("player/right", true);
-    } else {
-      player.setVelocityX(0);
-
-      player.anims.play("player/turn");
-    }
-
-    if (cursors.up.isDown && player.body.touching.down) {
-      player.setVelocityY(-330);
-    }
+    player.update(cursors);
   }
 
   onDoorCollided(arg1, arg2) {
